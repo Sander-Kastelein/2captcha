@@ -1,14 +1,18 @@
 {
-  "name": "2captcha",
-  "version": "0.0.1",
-  "description": "A wrapper for the 2Captcha API",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "captcha"
-  ],
-  "author": "Sander Kastelein",
-  "license": "MIT"
+    "name": "2captcha",
+    "version": "0.0.1",
+    "description": "A wrapper for the 2Captcha API",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "captcha"
+    ],
+    "author": "Sander Kastelein",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Sander-Kastelein/2captcha.git"
+    }
 }
