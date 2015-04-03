@@ -1,0 +1,24 @@
+# 2Captcha API wrapper for Node.js
+
+Post a captcha to the [2Captcha](https://2captcha.com/) service, then polls until the captcha is decoded.
+
+## Installation
+
+    npm install 2captcha
+
+
+## Usage
+
+
+Set up your api key:
+
+    var solver = require('2captcha');
+
+    solver.setApiKey('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+
+
+Decode from a url, with a 10 seconds polling interval:
+
+    solver.decodeUrl(url, 10000, function(err, result) {
+        console.log(result.text);
+    });
