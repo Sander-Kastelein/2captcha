@@ -162,7 +162,10 @@ module.exports.solveRecaptchaFromHtml = function(html, options, callback){
             if (challenge.length === 0)
                 return callback('Parsing captcha failed');
 
-            module.exports.decodeUrl('https://www.google.com/recaptcha/api/image?c='+challenge,options,callback);
+            module.exports.decodeUrl('https://www.google.com/recaptcha/api/image?c='+challenge,options,function(error, result, invalid){
+                result.challenge = challenge;
+                callback(error, result, invalid);
+            });
         });
     });
     request.end();
