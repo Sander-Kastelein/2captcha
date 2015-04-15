@@ -163,7 +163,8 @@ module.exports.solveRecaptchaFromHtml = function(html, options, callback){
                 return callback('Parsing captcha failed');
 
             module.exports.decodeUrl('https://www.google.com/recaptcha/api/image?c='+challenge,options,function(error, result, invalid){
-                result.challenge = challenge;
+                if(result)
+                    result.challenge = challenge;
                 callback(error, result, invalid);
             });
         });
