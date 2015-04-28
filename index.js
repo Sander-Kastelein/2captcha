@@ -85,7 +85,7 @@ module.exports.decode = function(base64, options, callback) {
         response.on('end', function() {
             var result = body.split('|');
             if (result[0] !== 'OK')
-                callback(result[0]);
+                return callback(result[0]);
             pollCaptcha(result[1], options, function(){
                 module.exports.report(this.captchaId);
                 if(!this.options.retries)
