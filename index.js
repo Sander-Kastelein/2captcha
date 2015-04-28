@@ -34,8 +34,10 @@ function pollCaptcha(captchaId, options, invalid, callback) {
             });
 
             response.on('end', function() {
-                if (body === 'CAPCHA_NOT_READY')
+                if (body === 'CAPCHA_NOT_READY'){
                     return;
+                }
+
                 clearInterval(intervalId);
 
                 var result = body.split('|');
@@ -84,17 +86,24 @@ module.exports.decode = function(base64, options, callback) {
 
         response.on('end', function() {
             var result = body.split('|');
-            if (result[0] !== 'OK')
+            if (result[0] !== 'OK'){
                 return callback(result[0]);
+            }
+
             pollCaptcha(result[1], options, function(){
+
+
+                var callbackToInitialCallback = callback;
+
                 module.exports.report(this.captchaId);
-                if(!this.options.retries)
+                if(!this.options.retries){
                     this.options.retries = defaultOptions.retries;
+                }
                 if(this.options.retries > 1){
                     this.options.retries = this.options.retries - 1;
                     module.exports.decode(base64, this.options, callback);
                 }else{
-                    callback('Failed too many times');
+                    callbackToInitialCallback('CAPTCHA_FAILED_TOO_MANY_TIMES');
                 }
             }, callback);
         });
