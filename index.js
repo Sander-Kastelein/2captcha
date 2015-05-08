@@ -13,19 +13,20 @@ var querystring = require('querystring');
 
 var apiKey;
 var apiInUrl = 'http://2captcha.com/in.php';
-var apiLookupUrl = 'http://2captcha.com/res.php?action=get';
+var apiResUrl = 'http://2captcha.com/res.php';
 var apiMethod = 'base64';
 
 var defaultOptions = {
     pollingInterval: 2000,
-    retries: 3
+    retries: 3,
+    solveRecaptchaFromHtmlAttempts:3
 };
 
 
 function pollCaptcha(captchaId, options, invalid, callback) {
     invalid = invalid.bind({options:options,captchaId:captchaId});
     var intervalId = setInterval(function() {
-        var httpRequestOptions = url.parse(apiLookupUrl + '&key=' + apiKey + '&id=' + captchaId);
+        var httpRequestOptions = url.parse(apiResUrl + '?action=get&key=' + apiKey + '&id=' + captchaId);
         var request = http.request(httpRequestOptions, function(response) {
             var body = '';
 
@@ -143,6 +144,12 @@ module.exports.solveRecaptchaFromHtml = function(html, options, callback){
         callback = options;
         options = defaultOptions;
     }
+    if(!options.solveRecaptchaFromHtmlAttempts){
+        options.solveRecaptchaFromHtmlAttempts = defaultOptions.solveRecaptchaFromHtmlAttempts;
+    }
+    if(options.solveRecaptchaFromHtmlAttempts === 0){
+        return callback('CAPTCHA_FAILED_TOO_MANY_TIMES');
+    }
     var googleUrl = html.split('/challenge?k=');
     if(googleUrl.length < 2)
         return callback('No captcha found in html');
@@ -172,8 +179,11 @@ module.exports.solveRecaptchaFromHtml = function(html, options, callback){
                 return callback('Parsing captcha failed');
 
             module.exports.decodeUrl('https://www.google.com/recaptcha/api/image?c='+challenge,options,function(error, result, invalid){
+                options.solveRecaptchaFromHtmlAttempts = options.solveRecaptchaFromHtmlAttempts - 1;
                 if(result)
                     result.challenge = challenge;
+                if(error)
+                    return module.exports.solveRecaptchaFromHtml(html, options, callback);
                 callback(error, result, invalid);
             });
         });
@@ -182,5 +192,18 @@ module.exports.solveRecaptchaFromHtml = function(html, options, callback){
 };
 
 module.exports.report = function(captchaId){
+    var reportUrl = apiResUrl+'?action=reportbad&key='+apiKey+'&id='+captchaId;
+    var options = url.parse(reportUrl);
 
+    var request = http.request(options, function(response) {
+        var body = '';
+
+        response.on('data', function(chunk) {
+            body += chunk;
+        });
+
+        response.on('end', function() {
+        });
+    });
+    request.end();
 };
