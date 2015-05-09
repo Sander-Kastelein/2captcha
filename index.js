@@ -91,7 +91,7 @@ module.exports.decode = function(base64, options, callback) {
                 return callback(result[0]);
             }
 
-            pollCaptcha(result[1], options, function(){
+            pollCaptcha(result[1], options, function(error){
 
 
                 var callbackToInitialCallback = callback;
@@ -100,7 +100,7 @@ module.exports.decode = function(base64, options, callback) {
                 if(!this.options.retries){
                     this.options.retries = defaultOptions.retries;
                 }
-                if(this.options.retries > 1){
+                if(this.options.retries > 1 && !error){
                     this.options.retries = this.options.retries - 1;
                     module.exports.decode(base64, this.options, callback);
                 }else{
