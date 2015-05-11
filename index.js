@@ -100,7 +100,7 @@ module.exports.decode = function(base64, options, callback) {
                 if(!this.options.retries){
                     this.options.retries = defaultOptions.retries;
                 }
-                if(this.options.retries > 1 && !error){
+                if(this.options.retries > 1){
                     this.options.retries = this.options.retries - 1;
                     module.exports.decode(base64, this.options, callback);
                 }else{
