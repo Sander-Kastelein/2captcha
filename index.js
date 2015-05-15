@@ -148,7 +148,7 @@ module.exports.solveRecaptchaFromHtml = function(html, options, callback){
         options.solveRecaptchaFromHtmlAttempts = defaultOptions.solveRecaptchaFromHtmlAttempts;
     }
     if(options.solveRecaptchaFromHtmlAttempts === 0){
-        return callback('CAPTCHA_FAILED_TOO_MANY_TIMES');
+        return callback('RECAPTCHA_FAILED_TOO_MANY_TIMES');
     }
     var googleUrl = html.split('/challenge?k=');
     if(googleUrl.length < 2)
