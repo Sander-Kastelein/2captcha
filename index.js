@@ -97,6 +97,11 @@ module.exports.decode = function(base64, options, callback) {
                 var callbackToInitialCallback = callback;
 
                 module.exports.report(this.captchaId);
+
+                if(error){
+                    return callbackToInitialCallback('CAPTCHA_FAILED');
+                }
+
                 if(!this.options.retries){
                     this.options.retries = defaultOptions.retries;
                 }
