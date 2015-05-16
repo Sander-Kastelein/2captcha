@@ -1,6 +1,6 @@
 {
     "name": "2captcha",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "description": "A wrapper for the 2Captcha API",
     "main": "index.js",
     "scripts": {

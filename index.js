@@ -18,8 +18,7 @@ var apiMethod = 'base64';
 
 var defaultOptions = {
     pollingInterval: 2000,
-    retries: 3,
-    solveRecaptchaFromHtmlAttempts:3
+    retries: 3
 };
 
 
@@ -149,12 +148,6 @@ module.exports.solveRecaptchaFromHtml = function(html, options, callback){
         callback = options;
         options = defaultOptions;
     }
-    if(!options.solveRecaptchaFromHtmlAttempts){
-        options.solveRecaptchaFromHtmlAttempts = defaultOptions.solveRecaptchaFromHtmlAttempts;
-    }
-    if(options.solveRecaptchaFromHtmlAttempts === 0){
-        return callback('RECAPTCHA_FAILED_TOO_MANY_TIMES');
-    }
     var googleUrl = html.split('/challenge?k=');
     if(googleUrl.length < 2)
         return callback('No captcha found in html');
@@ -184,11 +177,9 @@ module.exports.solveRecaptchaFromHtml = function(html, options, callback){
                 return callback('Parsing captcha failed');
 
             module.exports.decodeUrl('https://www.google.com/recaptcha/api/image?c='+challenge,options,function(error, result, invalid){
-                options.solveRecaptchaFromHtmlAttempts = options.solveRecaptchaFromHtmlAttempts - 1;
-                if(result)
+                if(result){
                     result.challenge = challenge;
-                if(error)
-                    return module.exports.solveRecaptchaFromHtml(html, options, callback);
+                }
                 callback(error, result, invalid);
             });
         });
