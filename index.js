@@ -203,3 +203,60 @@ module.exports.report = function(captchaId){
     });
     request.end();
 };
+
+module.exports.decodeRecaptchaV2 = function(googlekey,pageurl,options,callback){
+    if(!callback){
+        callback = options;
+        options = defaultOptions;
+    }
+    var httpRequestOptions = url.parse(apiInUrl);
+    httpRequestOptions.method = 'POST';
+
+    var postData = {
+        method: "userrecaptcha",
+        key: apiKey,
+        googlekey: googlekey,
+        pageurl: pageurl
+    };
+
+    postData = querystring.stringify(postData);
+
+    var request = http.request(httpRequestOptions, function(response) {
+        var body = '';
+
+        response.on('data', function(chunk) {
+            body += chunk;
+        });
+
+        response.on('end', function() {
+            var result = body.split('|');
+            if (result[0] !== 'OK'){
+                return callback(result[0]);
+            }
+
+            pollCaptcha(result[1], options, function(error){
+
+
+                var callbackToInitialCallback = callback;
+
+                module.exports.report(this.captchaId);
+
+                if(error){
+                    return callbackToInitialCallback('CAPTCHA_FAILED');
+                }
+
+                if(!this.options.retries){
+                    this.options.retries = defaultOptions.retries;
+                }
+                if(this.options.retries > 1){
+                    this.options.retries = this.options.retries - 1;
+                    module.exports.decode(base64, this.options, callback);
+                }else{
+                    callbackToInitialCallback('CAPTCHA_FAILED_TOO_MANY_TIMES');
+                }
+            }, callback);
+        });
+    });
+    request.write(postData)
+    request.end();
+}
