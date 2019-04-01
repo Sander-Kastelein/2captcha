@@ -2,6 +2,8 @@
 
 Post a captcha to the [2Captcha](https://2captcha.com/) service, then polls until the captcha is decoded.
 
+(!) THIS LIBRARY IS BASED ON OUTDATED API SPECS AND IS NO LONGER SUPPORTED.
+
 ## Installation
 
     npm install 2captcha
